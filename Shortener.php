@@ -39,11 +39,14 @@
 			return $shortcode;
 		}
 
+
+		//validate url formate checking function
 		protected function validateUrlFormate($url){
 			//http://www.example.com)
 			return filter_var($url,FILTER_VALIDATE_URL,FILTER_FLAG_HOST_REQUIRED);
 		}
 
+		//verfiry real url exists  function
 		protected function verifyUrlExists($url){
 			$ch =  crul_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
@@ -56,7 +59,7 @@
 			return (!empty($response) && $response != 404);
 		}
 
-
+		//checking url exists in DB
 		protected function urlExistsInDb($url){
 			$query = "SELECT * FROM ".self::$table." WHERE long_url= :long_url limit 1";
 			$stmt = $this->pdo->prepare($query);
@@ -67,6 +70,50 @@
 			$result = $stmt->fetch();
 			return (empty($result)) ? false : $result['short_code'];
 		}
+
+
+		//create shortcode
+		protected function createShortcode($url){
+
+				$shortcode = $this->generateRandomString(self:$codeLength);
+				$id = $this->insertUrlInDB($url,$shortcode);
+				return $shortcode;
+		}
+
+		protected function generateRandomString($length = 6){
+			$sets = explode('|', self::$chars);
+			$all = '';
+			$randString = '';
+			foreach ($sets as $set) {
+				$randString.= $set[array_rand(str_split($set))];
+				$all.=$set;
+			}
+
+			$all = str_split($all);
+			for ($i=0; $i < $length - count($sets) ; $i++) { 
+				$randString.= $all[array_rand($all)];
+			}
+			$randString = str_shuffle($randString);
+			return $randString;
+		}
+
+
+		//insert URl in databse
+		protected function insertUrlInDB($url , $code){
+			$query = "INSERT INTO ".self::$table."(long_url,shortcode,created) VALUES(:long_url,:shortcode,:timestamp)";
+			$stmt = $this->pdo->prepare($query);
+			$param = array(
+					"long_url" = $url;
+					"shortcode" = $code;
+					"timestamp" = $this->timestamp;
+			);
+			$stmt->execute($param);
+			return $this->pdo->lastInsertId();
+
+		}
+
+		
+
 
 
 	}
