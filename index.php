@@ -1,23 +1,6 @@
 <?php
-	// require_once('dbConfig.php');
-
-   //require_once('Shortener.php');
-   // ortener = new Shortener($db);
-    // $longURL = 'https://www.codexworld.com/tutorials/php/';
-    // $shortUrl_prefix= 'https://abc.com/';
-
-    // try {
-    //     $shortcode = $Shortener->urlToShortCode($longURL);
-
-    //     $shortURL = $shortUrl_prefix.$shortcode;
-
-    //     echo 'shortUrl : '.$shortURL;
-        
-    // } catch (Exception $e) {
-    //     echo $e->getMessage();
-    // }
-
-
+    require_once('Shortener.php');
+    $data = $Shortener->showDatafromDB();
 ?>
 
 <!doctype html>
@@ -67,12 +50,12 @@
                             </tr>
                           </thead>
                           <tbody>
-                       
+                            <?php foreach ($data as $data) {    ?>
                             <tr>
-                              <th scope="row">2</th>
-                              <td>Jacob</td>
+                              <th scope="row"><?php echo $data['short_code'] ?></th>
+                              <td><?php echo $data['hits'] ?></td>
                             </tr>
-                            
+                            <?php } ?>
                           </tbody>
                         </table>
                     </div>

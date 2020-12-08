@@ -6,7 +6,6 @@
 
 	require_once('dbConfig.php');
 	$Shortener = new Shortener($db);
-
 	$ajaxLongUrl = empty($_POST["lognUrl"]) ? "":$_POST["lognUrl"];
 	$autoLongUrl = empty($_POST["autoLongUrl"]) ? "":$_POST["autoLongUrl"];
 	$Usershortcode = empty($_POST["shortCode"]) ? "":$_POST["shortCode"];
@@ -149,6 +148,12 @@
 			$stmt->execute($param);
 			return $this->pdo->lastInsertId();
 
+		}
+
+		//select data from databse
+		public function showDatafromDB(){
+			$data = $this->pdo->query("SELECT * FROM ".self::$table."")->fetchAll(PDO::FETCH_ASSOC);
+			return $data;
 		}
 
 	}
