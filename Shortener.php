@@ -41,6 +41,21 @@
 		$upDatehit = $Shortener -> updateHit($urlID);
 	}
 
+	if(!empty($Usershortcode)){
+			 try {
+			 	$shortcode  = $Shortener->shortcodeExists($Usershortcode);
+			 	if($shortcode == false){
+					
+				}else{
+					echo  "this shortcode already exists....";
+				}
+	  
+		    } catch (Exception $e) {
+		        echo $e->getMessage();
+		    }
+
+	}
+
 	class Shortener 
 	{
 		
@@ -184,6 +199,18 @@
 			);
 			$Upstmt->execute($Upparam);
 			return "success";
+		}
+
+		//check short already exist
+		public function shortcodeExists($code){
+			$query = "SELECT * from ".self::$table." WHERE SUBSTRING_INDEX(short_code , '/',-1) =:code";
+			$stmt = $this->pdo->prepare($query);
+			$param = array(
+				"code" => $code
+			);
+			$stmt->execute($param);
+			$result = $stmt->fetch();
+			return (empty($result)) ? false : $result['short_code'];
 		}
 
 	}

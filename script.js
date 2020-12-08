@@ -28,6 +28,16 @@
     			errortext.innerHTML= "";
     			shortcode.style.borderColor = 'green';
     			submitbtn.disabled  = false;
+                $.ajax({
+                    url: 'Shortener.php',
+                    type: 'post',
+                    data: { "shortCode": shortcode.value},
+                    success: function(response) { 
+                        errortext.innerHTML= response;
+                        //submitbtn.disabled  = false; 
+
+                    }
+                });
     			
     		}
     	}
