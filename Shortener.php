@@ -145,13 +145,14 @@
 
 		//insert URl in databse
 		public function insertUrlInDB($url , $code){
-			$query = "INSERT INTO ".self::$table."(long_url,short_code,created) VALUES (:long_url, :shortcode, :timestamp)";
+			$query = "INSERT INTO ".self::$table."(long_url,short_code,created,last_access_date) VALUES (:long_url, :shortcode, :timestamp ,:last_access_date)";
 			$stmt = $this->pdo->prepare($query);
 			$shortlink = self :: $shortUrl_prefix.$code;
 			$param = array(
 					"long_url" => $url,
 					"shortcode" => $shortlink,
-					"timestamp" => $this->timestamp
+					"timestamp" => $this->timestamp,
+					"last_access_date" => ""
 			);
 			$stmt->execute($param);
 			return $this->pdo->lastInsertId();
@@ -175,11 +176,12 @@
 			$result = $stmt->fetch();
 			$newHit = $result["hits"] + 1;
 
-			$Upquery = "UPDATE  ".self::$table." SET hits = :newhit WHERE id = :urlid";
+			$Upquery = "UPDATE  ".self::$table." SET hits = :newhit , last_access_date = :last_access_date WHERE id = :urlid";
 			$Upstmt = $this->pdo->prepare($Upquery);
 			$Upparam = array(
 					"newhit" => $newHit,
 					"urlid" => $urlID,
+					"last_access_date" => $this->timestamp
 			);
 			$Upstmt->execute($Upparam);
 			return "success";

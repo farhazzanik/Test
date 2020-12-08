@@ -43,6 +43,8 @@
                             <tr>
                               <th scope="col">Short Link</th>
                               <th scope="col">Hit</th>
+                              <th scope="col">Created Date</th>
+                              <th scope="col">Last Access Date</th>
                             </tr>
                           </thead>
                           <tbody id="tbody">
