@@ -2,12 +2,35 @@
 	/**
 	 * 
 	 */
+
+
+	require_once('dbConfig.php');
+	$Shortener = new Shortener($db);
+
+	$ajaxLongUrl = empty($_POST["lognUrl"]) ? "":$_POST["lognUrl"];
+	$shortUrl_prefix= 'https://abc.com/';
+	if(!empty($ajaxLongUrl)){
+		 try {
+	        $shortcode = $Shortener->urlToShortCode($ajaxLongUrl);
+
+	        $shortURL = $shortUrl_prefix.$shortcode;
+
+	        echo $data = 'Short URL :'.$shortURL.'|'.$shortcode;
+	        
+	        
+	    } catch (Exception $e) {
+	        echo $e->getMessage();
+	    }
+
+	}
+
+
 	class Shortener 
 	{
 		
 		protected static $chars = "abcdfghjkmnpqrstvwxyz|ABCDFGHJKLMNPQRSTVWXYZ|0123456789";
 		protected static $table = "short_urls";
-		protected static $checkUrlExists  = false;
+		protected static $checkUrlExists  = true;
 		protected static $codeLength = 6;
 		protected $pdo;
 		protected $timestamp;
@@ -28,14 +51,14 @@
 			}
 			if(self::$checkUrlExists){
 				if(!$this->verifyUrlExists($url)){
-					throw new Exception("URL doesn't apear to exist...")
+					throw new Exception("URL doesn't apear to exist...");
 				}
 			}
 			$shortcode = $this->urlExistsInDb($url);
+			
 			if($shortcode == false){
 				$shortcode = $this->createShortcode($url);
 			}
-
 			return $shortcode;
 		}
 
@@ -48,14 +71,13 @@
 
 		//verfiry real url exists  function
 		protected function verifyUrlExists($url){
-			$ch =  crul_init();
+			$ch =  curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_NOBODY, true);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_exec($ch);
 			$response = curl_getinfo($ch,CURLINFO_HTTP_CODE);
-			curl_close($ch)
-
+			curl_close($ch);
 			return (!empty($response) && $response != 404);
 		}
 
@@ -64,8 +86,8 @@
 			$query = "SELECT * FROM ".self::$table." WHERE long_url= :long_url limit 1";
 			$stmt = $this->pdo->prepare($query);
 			$param = array(
-				"long_url" => $url;
-			)
+				"long_url" => $url
+			);
 			$stmt->execute($param);
 			$result = $stmt->fetch();
 			return (empty($result)) ? false : $result['short_code'];
@@ -74,8 +96,7 @@
 
 		//create shortcode
 		protected function createShortcode($url){
-
-				$shortcode = $this->generateRandomString(self:$codeLength);
+				$shortcode = $this->generateRandomString(self::$codeLength);
 				$id = $this->insertUrlInDB($url,$shortcode);
 				return $shortcode;
 		}
@@ -100,22 +121,20 @@
 
 		//insert URl in databse
 		protected function insertUrlInDB($url , $code){
-			$query = "INSERT INTO ".self::$table."(long_url,shortcode,created) VALUES(:long_url,:shortcode,:timestamp)";
+			$query = "INSERT INTO ".self::$table."(long_url,short_code,created) VALUES (:long_url, :shortcode, :timestamp)";
 			$stmt = $this->pdo->prepare($query);
 			$param = array(
-					"long_url" = $url;
-					"shortcode" = $code;
-					"timestamp" = $this->timestamp;
+					"long_url" => $url,
+					"shortcode" => $code,
+					"timestamp" => $this->timestamp
 			);
 			$stmt->execute($param);
 			return $this->pdo->lastInsertId();
 
 		}
 
-		
-
-
-
 	}
+
+
 
 ?>
