@@ -1,9 +1,4 @@
 <?php
-	/**
-	 * 
-	 */
-
-
 	require_once('dbConfig.php');
 	$Shortener = new Shortener($db);
 	$ajaxLongUrl = empty($_POST["lognUrl"]) ? "":$_POST["lognUrl"];
