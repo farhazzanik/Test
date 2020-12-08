@@ -10,6 +10,7 @@
 	$autoLongUrl = empty($_POST["autoLongUrl"]) ? "":$_POST["autoLongUrl"];
 	$Usershortcode = empty($_POST["shortCode"]) ? "":$_POST["shortCode"];
 	$shortUrl_prefix= 'https://abc.com/';
+	$urlID = empty($_POST["id"]) ? "":$_POST["id"];
 
 	if(!empty($ajaxLongUrl)){
 		 try {
@@ -36,6 +37,10 @@
 	        echo $e->getMessage();
 	    }
 
+	}
+
+	if(!empty($urlID)){
+		$upDatehit = $Shortener -> updateHit($urlID);
 	}
 
 	class Shortener 
@@ -157,6 +162,27 @@
 		public function showDatafromDB(){
 			$data = $this->pdo->query("SELECT * FROM ".self::$table."  order by id desc ")->fetchAll(PDO::FETCH_ASSOC);
 			return $data;
+		}
+
+		//update hit 
+		public function updateHit($urlID){
+			$query = "SELECT * FROM ".self::$table." WHERE id =:urlid limit 1";
+			$stmt = $this->pdo->prepare($query);
+			$param = array(
+				"urlid" => $urlID
+			);
+			$stmt->execute($param);
+			$result = $stmt->fetch();
+			$newHit = $result["hits"] + 1;
+
+			$Upquery = "UPDATE  ".self::$table." SET hits = :newhit WHERE id = :urlid";
+			$Upstmt = $this->pdo->prepare($Upquery);
+			$Upparam = array(
+					"newhit" => $newHit,
+					"urlid" => $urlID,
+			);
+			$Upstmt->execute($Upparam);
+			return "success";
 		}
 
 	}

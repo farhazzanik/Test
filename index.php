@@ -142,6 +142,19 @@
             }      
 
         }
+
+        //total click insert in database
+        function totalHit(id){
+            $.ajax({
+                    url: 'Shortener.php',
+                    type: 'post',
+                    data: { "id": id},
+                    success: function(response) { 
+                        //console.log(response);
+                        loadData();
+                    }
+            }); 
+        }
     </script>
   </body>
 </html>
