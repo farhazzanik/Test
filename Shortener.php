@@ -29,7 +29,10 @@
 
 	if(!empty($autoLongUrl) && isset($_POST['autoLongUrl'])){
 		 try {
-	        $shortcode = $Shortener->generateRandomString(6);
+		 	$shortcode  = $Shortener->urlExistsInDb($autoLongUrl);
+		 	if($shortcode == false){
+				 $shortcode = $Shortener->generateRandomString(6);
+			}
 	        echo $shortcode;
 	        
 	        
@@ -102,7 +105,7 @@
 		}
 
 		//checking url exists in DB
-		protected function urlExistsInDb($url){
+		public function urlExistsInDb($url){
 			$query = "SELECT * FROM ".self::$table." WHERE long_url= :long_url limit 1";
 			$stmt = $this->pdo->prepare($query);
 			$param = array(
@@ -119,6 +122,7 @@
 				if(!empty($Usershortcode)){
 					$shortcode = $Usershortcode;
 				}else{
+
 					$shortcode = $this->generateRandomString(self::$codeLength);
 				}
 				$id = $this->insertUrlInDB($url,$shortcode);
