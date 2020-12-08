@@ -44,19 +44,18 @@
 					<div class="mb-3">
 					  <label for="exampleFormControlInput1" class="form-label">Short URL</label>
 					  <div class="input-group">
-						  <input type="text" class="form-control" id="shortcode" name="shortcode" placeholder="shortcode" onkeypress="checkCharacter()">
+						  <input type="text" class="form-control" id="shortcode" name="shortcode" placeholder="shortcode"  onkeyup="checkCharacter()">
 						  <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="generateId()" >
 						  	<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 							  <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
 							  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
 							</svg>
 						  </button>
-						  <span id="errortext"></span>
-
 					  </div>
+                       <span id="errortext"></span>
 					</div>
 					<div class="mb-3">
-					 <button type="button" class="btn btn-success" id="submit" disabled name="submit" >Submit</button>
+					 <button type="button" class="btn btn-success" id="submit" disabled name="submit" onclick="submitData()" >Submit</button>
 					</div>
 				</form>
 		</div>
@@ -68,10 +67,12 @@
     		var shortcode = document.getElementById('shortcode');
     		var errortext = document.getElementById('errortext');
     		var submitbtn = document.getElementById('submit');
-    		if(shortcode.value.length < 3){
+            var lognUrl = document.getElementById('orgUrl');
+    		if(shortcode.value.length < 4){
     			errortext.innerHTML= "It shoud be  4 Characters or more...";
     			errortext.style.color = 'red';
     			shortcode.style.borderColor = 'red'
+                submitbtn.disabled  = true;
     		}else {
     			errortext.innerHTML= "";
     			shortcode.style.borderColor = 'green';
@@ -105,6 +106,33 @@
                   errorMessage.classList.add('alert');
                   errorMessage.classList.add('alert-danger'); 
             }      
+        }
+
+        //Insert Data in Database
+        function submitData(){
+            var lognUrl = document.getElementById('orgUrl');
+            var errorMessage = document.getElementById('alert-danger');
+            var shortcode = document.getElementById('shortcode');
+            if(lognUrl.value.length > 0  && shortcode.value.length > 3){
+                    $.ajax({
+                        url: 'Shortener.php',
+                        type: 'post',
+                        data: { "lognUrl": lognUrl.value,"shortCode" : shortcode.value },
+                        success: function(response) { 
+                            var str = response.split("|");
+                            errorMessage.innerHTML = str[0];
+                            errorMessage.classList.add('alert');
+                            errorMessage.classList.add('alert-danger');
+
+                        }
+                    });
+
+                }else {
+                  errorMessage.innerHTML = "Please Fill up data...";  
+                  errorMessage.classList.add('alert');
+                  errorMessage.classList.add('alert-danger'); 
+            }      
+
         }
     </script>
   </body>

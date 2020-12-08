@@ -8,10 +8,11 @@
 	$Shortener = new Shortener($db);
 
 	$ajaxLongUrl = empty($_POST["lognUrl"]) ? "":$_POST["lognUrl"];
+	$Usershortcode = empty($_POST["shortCode"]) ? "":$_POST["shortCode"];
 	$shortUrl_prefix= 'https://abc.com/';
 	if(!empty($ajaxLongUrl)){
 		 try {
-	        $shortcode = $Shortener->urlToShortCode($ajaxLongUrl);
+	        $shortcode = $Shortener->urlToShortCode($ajaxLongUrl,$Usershortcode);
 
 	        $shortURL = $shortUrl_prefix.$shortcode;
 
@@ -23,7 +24,6 @@
 	    }
 
 	}
-
 
 	class Shortener 
 	{
@@ -40,7 +40,7 @@
 			$this->timestamp = date("Y-m-d H:i:s");
 		}
 
-		public function urlToShortCode($url){
+		public function urlToShortCode($url , $Usershortcode){
 			if(empty($url)){
 				throw new Exception("URL not Found...");
 			}
@@ -57,7 +57,7 @@
 			$shortcode = $this->urlExistsInDb($url);
 			
 			if($shortcode == false){
-				$shortcode = $this->createShortcode($url);
+				$shortcode = $this->createShortcode($url , $Usershortcode);
 			}
 			return $shortcode;
 		}
@@ -95,8 +95,12 @@
 
 
 		//create shortcode
-		protected function createShortcode($url){
-				$shortcode = $this->generateRandomString(self::$codeLength);
+		protected function createShortcode($url , $Usershortcode){
+				if(!empty($Usershortcode)){
+					$shortcode = $Usershortcode;
+				}else{
+					$shortcode = $this->generateRandomString(self::$codeLength);
+				}
 				$id = $this->insertUrlInDB($url,$shortcode);
 				return $shortcode;
 		}
@@ -120,7 +124,7 @@
 
 
 		//insert URl in databse
-		protected function insertUrlInDB($url , $code){
+		public function insertUrlInDB($url , $code){
 			$query = "INSERT INTO ".self::$table."(long_url,short_code,created) VALUES (:long_url, :shortcode, :timestamp)";
 			$stmt = $this->pdo->prepare($query);
 			$param = array(
