@@ -8,8 +8,10 @@
 	$Shortener = new Shortener($db);
 
 	$ajaxLongUrl = empty($_POST["lognUrl"]) ? "":$_POST["lognUrl"];
+	$autoLongUrl = empty($_POST["autoLongUrl"]) ? "":$_POST["autoLongUrl"];
 	$Usershortcode = empty($_POST["shortCode"]) ? "":$_POST["shortCode"];
 	$shortUrl_prefix= 'https://abc.com/';
+
 	if(!empty($ajaxLongUrl)){
 		 try {
 	        $shortcode = $Shortener->urlToShortCode($ajaxLongUrl,$Usershortcode);
@@ -17,6 +19,18 @@
 	        $shortURL = $shortUrl_prefix.$shortcode;
 
 	        echo $data = 'Short URL :'.$shortURL.'|'.$shortcode;
+	        
+	        
+	    } catch (Exception $e) {
+	        echo $e->getMessage();
+	    }
+
+	}
+
+	if(!empty($autoLongUrl) && isset($_POST['autoLongUrl'])){
+		 try {
+	        $shortcode = $Shortener->generateRandomString(6);
+	        echo $shortcode;
 	        
 	        
 	    } catch (Exception $e) {
@@ -105,7 +119,7 @@
 				return $shortcode;
 		}
 
-		protected function generateRandomString($length = 6){
+		public function generateRandomString($length = 6){
 			$sets = explode('|', self::$chars);
 			$all = '';
 			$randString = '';

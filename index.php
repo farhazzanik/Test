@@ -1,8 +1,8 @@
 <?php
 	// require_once('dbConfig.php');
 
- //    require_once('Shortener.php');
- //    $Shortener = new Shortener($db);
+   //require_once('Shortener.php');
+   // ortener = new Shortener($db);
     // $longURL = 'https://www.codexworld.com/tutorials/php/';
     // $shortUrl_prefix= 'https://abc.com/';
 
@@ -57,6 +57,25 @@
 					<div class="mb-3">
 					 <button type="button" class="btn btn-success" id="submit" disabled name="submit" onclick="submitData()" >Submit</button>
 					</div>
+
+                    <div>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Short Link</th>
+                              <th scope="col">Hit</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                       
+                            <tr>
+                              <th scope="row">2</th>
+                              <td>Jacob</td>
+                            </tr>
+                            
+                          </tbody>
+                        </table>
+                    </div>
 				</form>
 		</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
@@ -86,17 +105,15 @@
             var lognUrl = document.getElementById('orgUrl');
             var errorMessage = document.getElementById('alert-danger');
             var shortcode = document.getElementById('shortcode');
+            var submitbtn = document.getElementById('submit');
             if(lognUrl.value.length > 0 ){
                 $.ajax({
                     url: 'Shortener.php',
                     type: 'post',
-                    data: { "lognUrl": lognUrl.value},
+                    data: { "autoLongUrl": lognUrl.value},
                     success: function(response) { 
-                        var str = response.split("|");
-                        errorMessage.innerHTML = str[0];
-                        shortcode.value=str[1]; 
-                        errorMessage.classList.add('alert');
-                        errorMessage.classList.add('alert-danger');
+                        shortcode.value=response;
+                        submitbtn.disabled  = false; 
 
                     }
                 });
@@ -105,6 +122,7 @@
                   errorMessage.innerHTML = "Use Orginal URL...";  
                   errorMessage.classList.add('alert');
                   errorMessage.classList.add('alert-danger'); 
+                  submitbtn.disabled  = true;
             }      
         }
 
