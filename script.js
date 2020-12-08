@@ -31,7 +31,7 @@
                 $.ajax({
                     url: 'Shortener.php',
                     type: 'post',
-                    data: { "shortCode": shortcode.value},
+                    data: { "CheckshortCode": shortcode.value},
                     success: function(response) { 
                         errortext.innerHTML= response;
                         //submitbtn.disabled  = false; 
@@ -79,8 +79,9 @@
                         type: 'post',
                         data: { "lognUrl": lognUrl.value,"shortCode" : shortcode.value },
                         success: function(response) { 
+                           // console.log(response);
                             var str = response.split("|");
-                            errorMessage.innerHTML = str[1];
+                            errorMessage.innerHTML = str[0];
                             errorMessage.classList.add('alert');
                             errorMessage.classList.add('alert-danger');
                             loadData();

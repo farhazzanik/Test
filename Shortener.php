@@ -7,7 +7,7 @@
 	$shortUrl_prefix= 'https://abc.com/';
 	$urlID = empty($_POST["id"]) ? "":$_POST["id"];
 
-	if(!empty($ajaxLongUrl)){
+	if(!empty($ajaxLongUrl)  && isset($_POST['lognUrl'])){
 		 try {
 	        $shortcode = $Shortener->urlToShortCode($ajaxLongUrl,$Usershortcode);
 
@@ -41,9 +41,9 @@
 		$upDatehit = $Shortener -> updateHit($urlID);
 	}
 
-	if(!empty($Usershortcode)){
+	if(isset($_POST['CheckshortCode'])){
 			 try {
-			 	$shortcode  = $Shortener->shortcodeExists($Usershortcode);
+			 	$shortcode  = $Shortener->shortcodeExists($_POST['CheckshortCode']);
 			 	if($shortcode == false){
 					
 				}else{
@@ -88,8 +88,8 @@
 				}
 			}
 			$shortcode = $this->urlExistsInDb($url);
-			
-			if($shortcode == false){
+			$codeExist = $this->shortcodeExists($Usershortcode);
+			if($shortcode == false &&  $codeExist == false){
 				$shortcode = $this->createShortcode($url , $Usershortcode);
 			}
 			return $shortcode;
