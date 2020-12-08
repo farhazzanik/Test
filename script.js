@@ -80,7 +80,7 @@
                         data: { "lognUrl": lognUrl.value,"shortCode" : shortcode.value },
                         success: function(response) { 
                             var str = response.split("|");
-                            errorMessage.innerHTML = str[0];
+                            errorMessage.innerHTML = str[1];
                             errorMessage.classList.add('alert');
                             errorMessage.classList.add('alert-danger');
                             loadData();
