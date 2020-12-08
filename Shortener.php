@@ -152,7 +152,7 @@
 
 		//select data from databse
 		public function showDatafromDB(){
-			$data = $this->pdo->query("SELECT * FROM ".self::$table."")->fetchAll(PDO::FETCH_ASSOC);
+			$data = $this->pdo->query("SELECT * FROM ".self::$table."  order by id desc ")->fetchAll(PDO::FETCH_ASSOC);
 			return $data;
 		}
 

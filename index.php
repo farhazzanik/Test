@@ -1,7 +1,3 @@
-<?php
-    require_once('Shortener.php');
-    $data = $Shortener->showDatafromDB();
-?>
 
 <!doctype html>
 <html lang="en">
@@ -49,13 +45,8 @@
                               <th scope="col">Hit</th>
                             </tr>
                           </thead>
-                          <tbody>
-                            <?php foreach ($data as $data) {    ?>
-                            <tr>
-                              <th scope="row"><?php echo $data['short_code'] ?></th>
-                              <td><?php echo $data['hits'] ?></td>
-                            </tr>
-                            <?php } ?>
+                          <tbody id="tbody">
+                           
                           </tbody>
                         </table>
                     </div>
@@ -64,6 +55,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script type="text/javascript">
+
+        //auto load data in table
+        function loadData(){
+            var tbody = document.getElementById('tbody');
+            $.ajax({
+                    url: 'loadData.php',
+                    success: function(response) { 
+                        tbody.innerHTML=response;
+                        //submitbtn.disabled  = false; 
+
+                    }
+                });
+        }
+        loadData();
+
     	//checking text fields length more than 4 character
     	function checkCharacter(){
     		var shortcode = document.getElementById('shortcode');
@@ -124,6 +130,7 @@
                             errorMessage.innerHTML = str[0];
                             errorMessage.classList.add('alert');
                             errorMessage.classList.add('alert-danger');
+                            loadData();
 
                         }
                     });
