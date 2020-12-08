@@ -45,6 +45,8 @@
 		protected static $table = "short_urls";
 		protected static $checkUrlExists  = true;
 		protected static $codeLength = 6;
+		protected static $shortUrl_prefix= 'https://abc.com/';
+
 		protected $pdo;
 		protected $timestamp;
 
@@ -140,9 +142,10 @@
 		public function insertUrlInDB($url , $code){
 			$query = "INSERT INTO ".self::$table."(long_url,short_code,created) VALUES (:long_url, :shortcode, :timestamp)";
 			$stmt = $this->pdo->prepare($query);
+			$shortlink = self :: $shortUrl_prefix.$code;
 			$param = array(
 					"long_url" => $url,
-					"shortcode" => $code,
+					"shortcode" => $shortlink,
 					"timestamp" => $this->timestamp
 			);
 			$stmt->execute($param);
